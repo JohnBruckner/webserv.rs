@@ -95,6 +95,7 @@ pub fn parse_request<'a>(request: &Vec<String>, body: &'a Vec<u8>) -> ParseResul
         h.iter().nth(1).unwrap().to_string(),
         h.iter().nth(2).unwrap().to_string(),
     );
+    // headers are of pattern Header-name: header-value (Content-Type: application/json)
     let headers: HashMap<String, String> = request
         .iter()
         .skip(1)

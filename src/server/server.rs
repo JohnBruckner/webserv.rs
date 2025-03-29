@@ -2,7 +2,6 @@ use crate::http::parser::parse_request;
 use std::{
     io::{BufRead, BufReader, Read, Write},
     net::{TcpListener, TcpStream},
-    rc::Rc,
 };
 
 use super::thread_pool::ThreadPool;

@@ -1,5 +1,5 @@
 use super::parse_error::HttpParseError;
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap, error::Error};
 
 static PROTOCOL: &str = "HTTP/1.1";
 
@@ -60,6 +60,43 @@ impl<'a> HttpRequest<'a> {
             headers: headers,
             body: body,
         }
+    }
+
+    pub fn content_type(&self) -> Option<&String> {
+        self.headers.get("Content-Type")
+    }
+
+    pub fn body_to_json<T: serde::de::DeserializeOwned>(&self) -> Result<T, Box<dyn Error>> {
+        if let Some(content_type) = self.content_type() {
+            if content_type.starts_with("application/json") {
+                let body_str = std::str::from_utf8(&self.body)?;
+                let parsed: T = serde_json::from_str(body_str)?;
+                return Ok(parsed);
+            }
+        }
+        Err(Box::new(HttpParseError::new(
+            "Content is not application/json",
+        )))
+    }
+
+    pub fn body_to_text(&self) -> Result<String, Box<dyn Error>> {
+        if let Some(content_type) = self.content_type() {
+            let content_type = content_type.to_lowercase();
+            if content_type.starts_with("text/")
+                || content_type.starts_with("application/json")
+                || content_type.starts_with("application/xml")
+                || content_type.contains("+json") 
+                || content_type.contains("+xml") 
+                || content_type.contains("+text") 
+            {
+                let body_str = std::str::from_utf8(&self.body)?;
+                return Ok(body_str.to_string());
+            }
+            return Err(Box::new(HttpParseError::new("Content type is not text")));
+        }
+        Err(Box::new(HttpParseError::new(
+            "Request body has not content-type",
+        )))
     }
 }
 

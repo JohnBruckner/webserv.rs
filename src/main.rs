@@ -1,5 +1,4 @@
-use minimal_web_server::http::parser::RequestMethod;
-use minimal_web_server::server::server::{WebServer, WebServerBuilder};
+use minimal_web_server::server::server::WebServerBuilder;
 
 fn main() {
     let server = WebServerBuilder::new()

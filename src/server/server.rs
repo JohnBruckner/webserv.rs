@@ -1,10 +1,11 @@
 use super::thread_pool::ThreadPool;
-use crate::http::parser::{RequestMethod, parse_request};
+use crate::http::parser::{parse_request};
 use std::collections::HashMap;
 use std::{
     io::{BufRead, BufReader, Read, Write},
     net::{TcpListener, TcpStream},
 };
+use crate::request::request::RequestMethod;
 
 type EndpointMethod = Box<dyn FnOnce() + Send + 'static>;
 
@@ -172,8 +173,8 @@ impl WebServer {
             }
         }
 
-        println!("Request {:#?}", http_request);
-        println!("Request body: {:?}", String::from_utf8_lossy(&request_body));
+        println!("request {:#?}", http_request);
+        println!("request body: {:?}", String::from_utf8_lossy(&request_body));
 
         let _parse_result = parse_request(&http_request, &request_body);
 

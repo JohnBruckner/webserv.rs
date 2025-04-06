@@ -6,7 +6,7 @@ static PROTOCOL: &str = "HTTP/1.1";
 type ParseResult<T> = Result<T, Box<HttpParseError>>;
 
 #[derive(Debug)]
-enum RequestMethod {
+pub enum RequestMethod {
     Get,
     Post,
     Options,
@@ -119,7 +119,7 @@ pub fn parse_request<'a>(request: &Vec<String>, body: &'a Vec<u8>) -> ParseResul
         return Err(Box::new(HttpParseError::new("Invalid http request")));
     }
 
-    // first line of requst should be <METHOD> <URI> <PROTOCOL>
+    // first line of request should be <METHOD> <URI> <PROTOCOL>
     let h: Vec<_> = request.first().unwrap().split(" ").collect();
     let method = match *h.first().unwrap() {
         "GET" => RequestMethod::Get,
